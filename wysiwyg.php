@@ -2,7 +2,7 @@
 
 require_once("markdown/Michelf/MarkdownExtra.inc.php");
 
-class wysiwyg {
+class Wysiwyg {
 
   public static function toHtml($text)
   {
