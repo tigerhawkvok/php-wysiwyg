@@ -1,7 +1,8 @@
 <?php
 
 /***
- * Basic WYSIWYG functionality
+ * Basic WYSIWYG functionality. Left for backwards compatibility if
+ * dropped into old things.
  ***/
 
 function parseBlock($block,$sanitize=true,$strip=true,$paragraph=true)
