@@ -1,30 +1,30 @@
 <?php
 
-/**
- * Basic WYSIWYG functionality 
- */
+/***
+ * Basic WYSIWYG functionality
+ ***/
 
-function parseBlock($block,$sanitize=true,$strip=TRUE,$paragraph=TRUE)
+function parseBlock($block,$sanitize=true,$strip=true,$paragraph=true)
 {
   // check for base64, and decode it if passed
   $raise_error=false;
   $error_log="";
   if(base64_encode(base64_decode($block,true))==$block) $block=base64_decode($block);
   if(!is_string($block)) return array(false,'error'=>'A string wasn\'t provided.');
-  if($sanitize) 
+  if($sanitize)
     {
       require_once('/var/www/modular/db_hook.inc');
       $parsed=sanitize($block);
     }
   else $parsed=$block;
-  /*** 
+  /***
        Check paragraphs
   ***/
   // tags
   if($paragraph)
     {
-      if(strpos($parsed,"<p>")===FALSE) $parsed = "<p>" . $parsed;
-      if(strpos($parsed,"</p>")===FALSE) $parsed = $parsed . "</p>";
+      if(strpos($parsed,"<p>")===false) $parsed = "<p>" . $parsed;
+      if(strpos($parsed,"</p>")===false) $parsed = $parsed . "</p>";
     }
   $parsed=urldecode($parsed);
   // possibly has a bug removing a line beginning with a single quote after a new line.
@@ -36,7 +36,7 @@ function parseBlock($block,$sanitize=true,$strip=TRUE,$paragraph=TRUE)
   $parsed=preg_replace('/&(?![A-Za-z0-9#]{1,7};)/','&amp;',$parsed); // replace standalone "&" with &amp;
   $parsed=preg_replace("/([^=])'([^\/>](?!(.{2,6}=)))/","$1&#39;$2",$parsed); // replace standalone single quotes
   // some characters
-  $parsed=str_replace(" < "," &lt; ",$parsed); 
+  $parsed=str_replace(" < "," &lt; ",$parsed);
   $parsed=str_replace(" > "," &gt; ",$parsed);
   $parsed=str_replace("--","&#8212;",$parsed);
   //Fix broken bits pasted from a word processor
@@ -56,14 +56,14 @@ function parseBlock($block,$sanitize=true,$strip=TRUE,$paragraph=TRUE)
       Replace special tags. Only iterate over them if any exist.
   ***/
   //img
-  if(strpos($parsed,"[img:")!==FALSE)
+  if(strpos($parsed,"[img:")!==false)
     {
       $pos=strpos($parsed,"[img:");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $img_o="";
           $end=strpos($parsed,"]",$pos);
-          if(substr($parsed,$pos-3,3)=="<p>")  
+          if(substr($parsed,$pos-3,3)=="<p>")
             {
               $i_switch=true;
               $i_rep="<p>";
@@ -73,7 +73,7 @@ function parseBlock($block,$sanitize=true,$strip=TRUE,$paragraph=TRUE)
               $i_switch=true;
               $i_rep="<p>\n";
             }
-          else 
+          else
             {
               $i_switch=false;
               //$img_o.="<!-- 4 parse '" . substr($parsed,$pos-4,4) . "'-->";
@@ -109,10 +109,10 @@ function parseBlock($block,$sanitize=true,$strip=TRUE,$paragraph=TRUE)
     }
 
   //link
-  if(strpos($parsed,"[link:")!==FALSE)
+  if(strpos($parsed,"[link:")!==false)
     {
       $pos=strpos($parsed,"[link:");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $end=strpos($parsed,"]",$pos);
           $length=$end-$pos;
@@ -128,13 +128,13 @@ function parseBlock($block,$sanitize=true,$strip=TRUE,$paragraph=TRUE)
     }
 
   //u
-  if(strpos($parsed,"[u]")!==FALSE)
+  if(strpos($parsed,"[u]")!==false)
     {
       $pos=strpos($parsed,"[u]");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $end=strpos($parsed,"[/u]",$pos);
-          if($end===FALSE)
+          if($end===false)
             {
               $short=trim(substr($parsed,$pos,25));
               $short_rep=trim(str_replace("[u]","[TagError]",$short));
@@ -151,13 +151,13 @@ function parseBlock($block,$sanitize=true,$strip=TRUE,$paragraph=TRUE)
     }
 
   //b
-  if(strpos($parsed,"[b]")!==FALSE)
+  if(strpos($parsed,"[b]")!==false)
     {
       $pos=strpos($parsed,"[b]");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $end=strpos($parsed,"[/b]",$pos);
-          if($end===FALSE)
+          if($end===false)
             {
               $short=trim(substr($parsed,$pos,25));
               $short_rep=trim(str_replace("[b]","[TagError]",$short));
@@ -174,13 +174,13 @@ function parseBlock($block,$sanitize=true,$strip=TRUE,$paragraph=TRUE)
     }
 
   //i
-  if(strpos($parsed,"[i]")!==FALSE)
+  if(strpos($parsed,"[i]")!==false)
     {
       $pos=strpos($parsed,"[i]");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $end=strpos($parsed,"[/i]",$pos);
-          if($end===FALSE)
+          if($end===false)
             {
               $short=trim(substr($parsed,$pos,25));
               $short_rep=trim(str_replace("[i]","[TagError]",$short));
@@ -197,13 +197,13 @@ function parseBlock($block,$sanitize=true,$strip=TRUE,$paragraph=TRUE)
     }
 
   //Greek Characters
-  if(strpos($parsed,"[grk]")!==FALSE)
+  if(strpos($parsed,"[grk]")!==false)
     {
       $pos=strpos($parsed,"[grk]");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $end=strpos($parsed,"[/grk]",$pos);
-          if($end===FALSE)
+          if($end===false)
             {
               $short=trim(substr($parsed,$pos,25));
               $short_rep=trim(str_replace("[grk]","[TagError]",$short));
@@ -229,7 +229,7 @@ function parseBlock($block,$sanitize=true,$strip=TRUE,$paragraph=TRUE)
   foreach($exp as $k=>$list)
     {
       if($k>0) { // always skip the first element
-        if(strpos($list,"[/list]")===false) 
+        if(strpos($list,"[/list]")===false)
           {
             $raise_error=true;
             $short=trim(substr($parsed,$pos,25));
@@ -252,7 +252,7 @@ function parseBlock($block,$sanitize=true,$strip=TRUE,$paragraph=TRUE)
   $parsed=implode("<span class='editor_replace_emotion'></span>",$exp);
 
 
-  if(strpos(substr($parsed,-8),"</p>")===FALSE && $paragraph) $parsed.="</p>";
+  if(strpos(substr($parsed,-8),"</p>")===false && $paragraph) $parsed.="</p>";
   // database clean
   if(!$strip)$parsed=addslashes($parsed);
   if($raise_error) return array(true,'html'=>$parsed,'error_log'=>$error_log,'new_edit'=>deparseBlock($parsed));
@@ -276,10 +276,10 @@ function deparseBlock($block)
   $parsed=str_replace(array("&#39;","&#34;"),array("'","\""),$parsed);
 
   // retag
-  if(strpos($parsed,"<div class='img")!==FALSE)
+  if(strpos($parsed,"<div class='img")!==false)
     {
       $pos=strpos($parsed,"<div class='img");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $length=strpos($parsed,"</div>",$pos)+6-$pos;
           $search=substr($parsed,$pos,$length);
@@ -293,7 +293,7 @@ function deparseBlock($block)
           $length=$end-$begin;
           $src=substr($parsed,$begin,$length);
           $tag.= $src . ",$align";
-          if(strpos($parsed,"$src' alt='",$begin)!==FALSE)
+          if(strpos($parsed,"$src' alt='",$begin)!==false)
             {
               $begin=strpos($parsed,"alt='",$begin)+5;
               $end=strpos($parsed,"'",$begin);
@@ -306,66 +306,76 @@ function deparseBlock($block)
         }
     }
 
-  if(strpos($parsed,"<a href='")!==FALSE)
+  if(strpos($parsed,"<a href='")!==false)
     {
       $pos=strpos($parsed,"<a href='");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $length=strpos($parsed,"</a>",$pos)+4-$pos;
           $search=substr($parsed,$pos,$length);
           $tag="[link:";
+          $md = "["
           $begin=$pos+9;
           $end=strpos($parsed,"'",$begin);
           $length=$end-$begin;
-          $tag.=substr($parsed,$begin,$length);
+          $href=substr($parsed,$begin,$length);
+          $tag.=$href;
           $begin=strpos($parsed,"'>",$begin)+2;
           $end=strpos($parsed,"</a>",$begin);
           $length=$end-$begin;
-          $tag.="," . substr($parsed,$begin,$length) . "]";
-          $parsed=str_replace($search,$tag,$parsed);
+          $text = substr($parsed,$begin,$length);
+          $md .= $text."](".$href.")"
+          $tag.="," . $text . "]";
+          $parsed=str_replace($search,$md,$parsed);
           $pos=strpos($parsed,"<a href='");
         }
     }
 
   // style tags
-  if(strpos($parsed,"<strong>")!==FALSE)
+  if(strpos($parsed,"<strong>")!==false)
     {
       $pos=strpos($parsed,"<strong>");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $end=strpos($parsed,"</strong>",$pos);
           $length=$end+9-$pos;
           $search=substr($parsed,$pos,$length);
           $tag="[b]";
+          $md = "**";
           $begin=$pos+8;
           $length=$end-$begin;
-          $tag.=substr($parsed,$begin,$length) . "[/b]";
-          $parsed=str_replace($search,$tag,$parsed);
+          $text = substr($parsed,$begin,$length);
+          $tag.=$text . "[/b]";
+          $md .= $text."**";
+          $parsed=str_replace($search,$md,$parsed);
           $pos=strpos($parsed,"<strong>");
         }
     }
 
-  if(strpos($parsed,"<em>")!==FALSE)
+  if(strpos($parsed,"<em>")!==false)
     {
       $pos=strpos($parsed,"<em>");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $end=strpos($parsed,"</em>",$pos);
           $length=$end+5-$pos;
           $search=substr($parsed,$pos,$length);
           $tag="[i]";
+          $md = "*";
           $begin=$pos+4;
           $length=$end-$begin;
-          $tag.=substr($parsed,$begin,$length) . "[/i]";
-          $parsed=str_replace($search,$tag,$parsed);
+          $text = substr($parsed,$begin,$length);
+          $tag.= $text . "[/i]";
+          $md .= $text."*";
+          $parsed=str_replace($search,$md,$parsed);
           $pos=strpos($parsed,"<em>");
         }
     }
 
-  if(strpos($parsed,"<span class='ul'>")!==FALSE)
+  if(strpos($parsed,"<span class='ul'>")!==false)
     {
       $pos=strpos($parsed,"<span class='ul'>");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $end=strpos($parsed,"</span>",$pos);
           $length=$end+7-$pos;
@@ -379,10 +389,10 @@ function deparseBlock($block)
         }
     }
 
-  if(strpos($parsed,"<span class='greek' lang='gr'>")!==FALSE)
+  if(strpos($parsed,"<span class='greek' lang='gr'>")!==false)
     {
       $pos=strpos($parsed,"<span class='greek' lang='gr'>");
-      while($pos!==FALSE)
+      while($pos!==false)
         {
           $end=strpos($parsed,"</span>",$pos);
           $length=$end+7-$pos;
@@ -395,6 +405,9 @@ function deparseBlock($block)
           $pos=strpos($parsed,"<span class='greek' lang='gr'>");
         }
     }
+
+  # Need to do more Markdown-style replacements ...
+  
   $exp=explode("<ul>",$parsed);
   $parsed=implode("[list]\n",$exp);
   $exp=explode("<li>",$parsed);
@@ -402,8 +415,6 @@ function deparseBlock($block)
   $exp=explode("</ul>",$parsed);
   $parsed=implode("[/list]",$exp);
   $parsed=str_replace("</li>","",$parsed);
-  $exp=explode("<span class='editor_replace_emotion'></span>",$parsed);
-  $parsed=implode("[[emotion]]",$exp);
 
   return $parsed;
 
