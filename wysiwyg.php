@@ -332,8 +332,8 @@ class Wysiwyg {
             $length=strpos($parsed,"</a>",$pos)+4-$pos;
             $search=substr($parsed,$pos,$length);
             $tag="[link:";
-            $md = "["
-              $begin=$pos+9;
+            $md = "[";
+            $begin=$pos+9;
             $end=strpos($parsed,"'",$begin);
             $length=$end-$begin;
             $href=substr($parsed,$begin,$length);
@@ -342,8 +342,8 @@ class Wysiwyg {
             $end=strpos($parsed,"</a>",$begin);
             $length=$end-$begin;
             $text = substr($parsed,$begin,$length);
-            $md .= $text."](".$href.")"
-              $tag.="," . $text . "]";
+            $md .= $text."](".$href.")";
+            $tag.="," . $text . "]";
             $parsed=str_replace($search,$md,$parsed);
             $pos=strpos($parsed,"<a href='");
           }
