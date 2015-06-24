@@ -10,7 +10,6 @@ class Wysiwyg
         if ($parsed["status"] === false) {
             $parsed["html"] = $text;
         }
-
         return MarkdownExtra::defaultTransform($parsed["html"]);
     }
 
