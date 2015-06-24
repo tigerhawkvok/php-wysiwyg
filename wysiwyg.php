@@ -4,20 +4,27 @@ require_once(dirname(__FILE__).'/markdown/Michelf/MarkdownExtra.inc.php');
 
 class Wysiwyg
 {
-    public static function toHtml($text)
+    public static function toHtml($text, $detail = false)
     {
-        $parsed = self::parseBlock($text);
+        $markdown = \Michelf\MarkdownExtra::defaultTransform($text);
+        # Clean out the new lines
+        $stripped_markdown = str_replace("\n","",$markdown);
+        $parsed = self::parseBlock($stripped_markdown, true, false);
         if ($parsed["status"] === false) {
-            $parsed["html"] = $text;
+            $parsed["html"] = $markdown;
+            $parsed["status"] = true;
+            $parsed["used_pure_markdown"] = true;
         }
-        return MarkdownExtra::defaultTransform($parsed["html"]);
+        else {
+            $parsed["used_pure_markdown"] = false;
+        }
+        if ($detail) return $parsed;
+        return $parsed["html"];
     }
 
     public static function fromHtml($html)
     {
         # Undo markdown
-        # $markdown =
-        $markdown = $html; # temp
         require_once(dirname(__FILE__)."/html-to-markdown/HTML_To_Markdown.php");
         $markdown = new HTML_To_Markdown($html);
         return self::deparseBlock($markdown->output());
@@ -27,7 +34,7 @@ class Wysiwyg
      * The old parsers -- they need function descriptions and much cleanup
      ******/
 
-    public static function parseBlock($block, $sanitize = true, $strip = true, $paragraph = true)
+    public static function parseBlock($block, $sanitize = true, $strip_html = true, $strip_slashes = true, $paragraph = true)
     {
         // check for base64, and decode it if passed
         $raise_error = false;
@@ -39,7 +46,19 @@ class Wysiwyg
             return array("status"=>false,'error' => 'A string wasn\'t provided.');
         }
         if ($sanitize && class_exists('DBHelper')) {
-            $parsed = DBHelper::staticSanitize($block);
+            $parsed = DBHelper::staticSanitize($block, $strip_html);
+            if(!$strip_html) {
+                # Fix the HTML less than greater than escapes
+                $find_array = array (
+                    "&lt;",
+                    "&gt;",
+                );
+                $replace_array = array(
+                    "<",
+                    ">",
+                );
+                $parsed = str_replace($find_array,$replace_array,$parsed);
+            }
         } else {
             # Do a simple port ...
             $parsed = $block;
