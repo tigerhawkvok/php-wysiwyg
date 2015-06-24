@@ -15,7 +15,7 @@ function parseBlock($block,$sanitize=true,$strip=true,$paragraph=true)
   if($sanitize)
     {
       # Requires DBHelper -- make sure it's included earlier!            
-      $parsed=DBHelper::statisSanitize($block);
+      $parsed=DBHelper::staticSanitize($block);
     }
   else $parsed=$block;
   /***
