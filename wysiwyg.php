@@ -1,8 +1,8 @@
 <?php
 
-require_once(dirname(__FILE__).'markdown/Michelf/MarkdownExtra.inc.php');
+require_once(dirname(__FILE__).'/markdown/Michelf/MarkdownExtra.inc.php');
 
-class wysiwyg
+class Wysiwyg
 {
     public static function toHtml($text)
     {
