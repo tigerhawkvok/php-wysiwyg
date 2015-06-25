@@ -252,7 +252,7 @@ class Wysiwyg
                 }
                 $length = $end - $pos;
                 $grk = substr($parsed, $pos + 5, $length - 5);
-                $grk_o = "<span class='greek' lang='gr'>$grk</span>";
+                $grk_o = "<span class='greek' lang='gr' style='font-family:symbol;'>$grk</span>";
                 $parsed = str_replace('[grk]'.$grk.'[/grk]', $grk_o, $parsed);
                 $pos = strpos($parsed, '[grk]');
             }
@@ -411,8 +411,8 @@ class Wysiwyg
             }
         }
 
-        if (strpos($parsed, "<span class='greek' lang='gr'>") !== false) {
-            $pos = strpos($parsed, "<span class='greek' lang='gr'>");
+        if (strpos($parsed, "<span class='greek' lang='gr' style='font-family:symbol;'>") !== false) {
+            $pos = strpos($parsed, "<span class='greek' lang='gr' style='font-family:symbol;'>");
             while ($pos !== false) {
                 $end = strpos($parsed, '</span>', $pos);
                 $length = $end + 7 - $pos;
@@ -425,8 +425,8 @@ class Wysiwyg
                 $pos = strpos($parsed, "<span class='greek' lang='gr'>");
             }
         }
-        if (strpos($parsed, "<span class=\"greek\" lang=\"gr\">") !== false) {
-            $pos = strpos($parsed, "<span class=\"greek\" lang=\"gr\">");
+        if (strpos($parsed, "<span class=\"greek\" lang=\"gr\" style=\"font-family:symbol;\">") !== false) {
+            $pos = strpos($parsed, "<span class=\"greek\" lang=\"gr\" style=\"font-family:symbol;\">");
             while ($pos !== false) {
                 $end = strpos($parsed, '</span>', $pos);
                 $length = $end + 7 - $pos;
