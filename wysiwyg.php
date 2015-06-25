@@ -17,6 +17,9 @@ class Wysiwyg
         }
         else {
             $parsed["used_pure_markdown"] = false;
+            $temp = preg_replace('/\\\\\'gr/', '\'gr', $parsed["html"]);
+            $temp = preg_replace('/\\\\\'/', '\'', $temp);
+            $parsed["html"] = $temp;
         }
         if ($detail) return $parsed;
         return $parsed["html"];
