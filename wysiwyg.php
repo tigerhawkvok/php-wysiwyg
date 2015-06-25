@@ -424,19 +424,20 @@ class Wysiwyg
                 $parsed = str_replace($search, $tag, $parsed);
                 $pos = strpos($parsed, "<span class='greek' lang='gr'>");
             }
-            if (strpos($parsed, "<span class=\"greek\" lang=\"gr\">") !== false) {
+        }
+        if (strpos($parsed, "<span class=\"greek\" lang=\"gr\">") !== false) {
+            $pos = strpos($parsed, "<span class=\"greek\" lang=\"gr\">");
+            while ($pos !== false) {
+                $end = strpos($parsed, '</span>', $pos);
+                $length = $end + 7 - $pos;
+                $search = substr($parsed, $pos, $length);
+                $tag = '[grk]';
+                $begin = $pos + 30;
+                $length = $end - $begin;
+                $tag .= substr($parsed, $begin, $length).'[/grk]';
+                $parsed = str_replace($search, $tag, $parsed);
                 $pos = strpos($parsed, "<span class=\"greek\" lang=\"gr\">");
-                while ($pos !== false) {
-                    $end = strpos($parsed, '</span>', $pos);
-                    $length = $end + 7 - $pos;
-                    $search = substr($parsed, $pos, $length);
-                    $tag = '[grk]';
-                    $begin = $pos + 30;
-                    $length = $end - $begin;
-                    $tag .= substr($parsed, $begin, $length).'[/grk]';
-                    $parsed = str_replace($search, $tag, $parsed);
-                    $pos = strpos($parsed, "<span class=\"greek\" lang=\"gr\">");
-                }
+            }
         }
 
         # Need to do more Markdown-style replacements ...
