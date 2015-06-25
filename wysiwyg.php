@@ -418,7 +418,7 @@ class Wysiwyg
                 $length = $end + 7 - $pos;
                 $search = substr($parsed, $pos, $length);
                 $tag = '[grk]';
-                $begin = $pos + 30;
+                $begin = $pos + 58;
                 $length = $end - $begin;
                 $tag .= substr($parsed, $begin, $length).'[/grk]';
                 $parsed = str_replace($search, $tag, $parsed);
@@ -432,7 +432,7 @@ class Wysiwyg
                 $length = $end + 7 - $pos;
                 $search = substr($parsed, $pos, $length);
                 $tag = '[grk]';
-                $begin = $pos + 30;
+                $begin = $pos + 58;
                 $length = $end - $begin;
                 $tag .= substr($parsed, $begin, $length).'[/grk]';
                 $parsed = str_replace($search, $tag, $parsed);
