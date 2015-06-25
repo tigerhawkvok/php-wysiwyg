@@ -25,12 +25,16 @@ class Wysiwyg
         return $parsed["html"];
     }
 
-    public static function fromHtml($html)
+    public static function fromHtml($html, $detail = false)
     {
         # Undo markdown
         require_once(dirname(__FILE__)."/html-to-markdown/HTML_To_Markdown.php");
         $markdown = new HTML_To_Markdown($html);
-        return self::deparseBlock($markdown->output());
+        if(!$detail) {
+            return self::deparseBlock($markdown->output());
+        }
+        $detail = array("markdown"=>$markdown,"human"=>self::deparseBlock($markdown->output()));
+        return $detail;
     }
 
     /******
